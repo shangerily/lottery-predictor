@@ -35,16 +35,16 @@ orientation = portrait
 fullscreen = 0
 
 # (int) Target Android API, should be as high as possible.
-android.api = 30
+android.api = 34
 
 # (int) Minimum API your APK will support.
 android.minapi = 21
 
 # (str) Android NDK version to use
-android.ndk = 23b
+android.ndk = 27c
 
 # (int) Android SDK version to use
-android.sdk = 30
+android.sdk = 34
 
 # (list) Android application meta-data to set (key=value format)
 android.meta_data = com.google.android.gms.version=@integer/google_play_services_version
@@ -61,6 +61,7 @@ android.copy_libs = 1
 # (str) The Android arch to build for, choices: armeabi-v7a, arm64-v8a, x86, x86_64
 android.archs = arm64-v8a, armeabi-v7a
 android.accept_sdk_license = True
+android.ndk_api = 21
 
 [buildozer]
 

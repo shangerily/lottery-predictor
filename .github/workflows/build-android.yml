@@ -63,6 +63,8 @@ jobs:
     
     - name: 构建APK
       run: |
+        cp buildozer_simple.spec buildozer.spec
+        cp main_simple.py main.py
         buildozer android debug
     
     - name: 重命名APK文件

@@ -1,0 +1,89 @@
+name: 构建大乐透预测APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+    
+    - name: 设置Python环境
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        cache: 'pip'
+    
+    - name: 安装系统依赖
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          openjdk-8-jdk \
+          build-essential \
+          git \
+          zip \
+          unzip \
+          autoconf \
+          libtool \
+          pkg-config \
+          zlib1g-dev \
+          libncurses5-dev \
+          libncursesw5-dev \
+          libtinfo5 \
+          cmake \
+          libffi-dev \
+          libssl-dev \
+          python3-dev
+    
+    - name: 设置Java环境
+      run: |
+        echo "JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> $GITHUB_ENV
+        echo "/usr/lib/jvm/java-8-openjdk-amd64/bin" >> $GITHUB_PATH
+    
+    - name: 安装Python依赖
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        pip install buildozer==1.4.0
+        pip install cython==0.29.36
+        pip install kivy==2.1.0
+        pip install pandas==1.5.3
+        pip install numpy==1.24.3
+    
+    - name: 缓存Buildozer全局目录
+      uses: actions/cache@v3
+      with:
+        path: ~/.buildozer
+        key: buildozer-${{ hashFiles('buildozer.spec') }}
+    
+    - name: 构建APK
+      run: |
+        buildozer android debug
+    
+    - name: 重命名APK文件
+      run: |
+        if [ -f bin/*.apk ]; then
+          mv bin/*.apk bin/大乐透预测系统-v1.0.apk
+        fi
+    
+    - name: 上传APK文件
+      uses: actions/upload-artifact@v4
+      with:
+        name: 大乐透预测系统APK
+        path: bin/大乐透预测系统-v1.0.apk
+        retention-days: 30
+    
+    - name: 显示构建信息
+      run: |
+        echo "🎉 APK构建完成！"
+        echo "📱 应用名称: 大乐透预测系统"
+        echo "📦 文件名称: 大乐透预测系统-v1.0.apk"
+        if [ -f bin/大乐透预测系统-v1.0.apk ]; then
+          echo "📊 文件大小: $(du -h bin/大乐透预测系统-v1.0.apk | cut -f1)"
+        fi
+        echo "⬇️ 请在Artifacts中下载APK文件"
